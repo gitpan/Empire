@@ -376,10 +376,15 @@ sub addGame {
     my $self = shift;
     my $arg = shift;
     my (@game) = split(/\s+/,$arg);
-    my $name = $game[$NAME];
 
-    for my $field (@FIELD) {
-	$self->{games}->{$name}->{$field} = shift @game;
+    if ($#game == $#FIELD) {
+	my $name = $game[$NAME];
+	for my $field (@FIELD) {
+	    $self->{games}->{$name}->{$field} = shift @game;
+	}
+    }
+    else {
+	print "Insufficient number of parameters!\n";
     }
 }
 sub showGame {

@@ -4,7 +4,9 @@ package Empire::Sector;
 use strict;
 use warnings;
 use Carp;
-
+use Exporter;
+our @ISA = qw(Exporter);
+our @EXPORT_OK = qw(%dumpfield);
 our %dumpfield = (own=>0,x=>0,y=>0,des=>'.',bdes=>'.',sdes=>'_',
 		  eff=>0,mob=>0,oldown=>0,off=>'.',
 		  min=>0,gold=>0,fert=>0,ocontent=>0,uran=>0,
@@ -51,6 +53,7 @@ sub refresh {
 	$self->{shift @{$sectorfield}} = $_;
     }
 }
+sub sect     {my $sector = shift; return "$sector->{x},$sector->{y}"};
 sub own      {my $sector = shift; return $sector->{own}};
 sub timestamp{my $sector = shift; return $sector->{timestamp}};
 sub xcoord   {my $sector = shift; return $sector->{x}};

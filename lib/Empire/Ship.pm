@@ -37,6 +37,7 @@ sub refresh {
 }
 sub own    {my $ship = shift;  return $ship->{own}};
 sub id     {my $ship = shift;  return $ship->{id}};
+sub ship   {my $ship = shift;  return $ship->id()};
 sub type   {my $ship = shift;  return $ship->{type}};
 sub xcoord {my $ship = shift;  return $ship->{x}};
 sub ycoord {my $ship = shift;  return $ship->{y}};

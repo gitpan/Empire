@@ -35,6 +35,7 @@ sub refresh {
 }
 sub own    {my $plane = shift;  return $plane->{own}};
 sub id     {my $plane = shift;  return $plane->{id}};
+sub plane  {my $plane = shift;  return $plane->id()};
 sub type   {my $plane = shift;  return $plane->{type}};
 sub xcoord {my $plane = shift;  return $plane->{x}};
 sub ycoord {my $plane = shift;  return $plane->{y}};

@@ -1251,7 +1251,7 @@ sub set_dump {
     my $y;
     $dumpvalue[1] =~ /(\d+)/;
     my $timestamp = $1;
-
+    my @sect;
     my (@dumpfield) = split(/ /,$dumpvalue[2]);
     unshift @dumpfield,'own' unless ($emp->{nation}->[$emp->nnum()]->nstatus() eq 'DEITY');
     unshift @dumpfield,'timestamp';
@@ -1265,16 +1265,17 @@ sub set_dump {
 	    $x = $dumpvalue[1];
 	    $y = $dumpvalue[2];
 	    unshift @dumpvalue,$timestamp;
-	    $emp->{SECTOR}->{$x}{$y} = Empire::Sector->new([@dumpfield],[@dumpvalue])
+	    $emp->{SECTOR}->{$x}{$y} = Empire::Sector->new([@dumpfield],[@dumpvalue]);
+	    push @sect,$emp->{SECTOR}->{$x}{$y};
 	}
     }
-    return($x,$y);
+    return (@sect);
 }
 sub set_sdump {
 
     my $emp  = shift;
     my $sdump = shift;
-
+    my @ship;
     return if ($sdump =~ /command failed/);
     $sdump =~ s/^\s+//gs;
     $sdump =~ s/\s+$//gs;
@@ -1297,14 +1298,16 @@ sub set_sdump {
 	    $id = $sdumpvalue[1];
 	    unshift @sdumpvalue,$timestamp;
 	    $emp->{SHIP}->{$id} = Empire::Ship->new([@sdumpfield],[@sdumpvalue]);
+	    push @ship,$emp->{SHIP}->{$id};
 	}
     }
-    return($id);
+    return(@ship);
 }
 sub set_pdump {
 
     my $emp  = shift;
     my $pdump = shift;
+    my @plane;
 
     return if ($pdump =~ /command failed/);
     $pdump =~ s/^\s+//gs;
@@ -1328,9 +1331,43 @@ sub set_pdump {
 	    $id = $pdumpvalue[1];
 	    unshift @pdumpvalue,$timestamp;
 	    $emp->{PLANE}->{$id} = Empire::Plane->new([@pdumpfield],[@pdumpvalue]);
+	    push @plane,$emp->{PLANE}->{$id};
 	}
     }
-    return($id);
+    return(@plane);
+}
+sub set_ldump {
+
+    my $emp  = shift;
+    my $ldump = shift;
+    my @unit;
+
+    return if ($ldump =~ /command failed/);
+    $ldump =~ s/^\s+//gs;
+    $ldump =~ s/\s+$//gs;
+    my (@ldumpvalue) = split(/\n/s,$ldump);
+    my $id;
+    $ldumpvalue[1] =~ /(\d+)/;
+    my $timestamp = $1;
+
+    my (@ldumpfield) = split(/ /,$ldumpvalue[2]);
+    unshift @ldumpfield,'own' unless ($emp->{nation}->[$emp->nnum()]->nstatus() eq 'DEITY');
+    unshift @ldumpfield,'timestamp';
+    for my $di (3..$#ldumpvalue) {
+	if ($ldumpvalue[$di] =~ /^\d+ plan/) {
+	    last;
+	}
+	else {
+	    $ldumpvalue[$di] =~ s/^\s+//;
+	    my(@ldumpvalue) = split(/\s+/,$ldumpvalue[$di]);
+	    unshift @ldumpvalue,$emp->nnum() unless ($emp->{nation}->[$emp->nnum()]->nstatus() eq 'DEITY');
+	    $id = $ldumpvalue[1];
+	    unshift @ldumpvalue,$timestamp;
+	    $emp->{UNIT}->{$id} = Empire::Unit->new([@ldumpfield],[@ldumpvalue]);
+	    push @unit,$emp->{UNIT}->{$id};
+	}
+    }
+    return(@unit);
 }
 sub get_ships_by_coord {
 
@@ -1348,8 +1385,10 @@ sub get_ships_by_coord {
 sub getsector {my ($emp,$x,$y) = @_; return $emp->{SECTOR}->{$x}{$y}};
 sub getship   {my ($emp,$id)   = @_; return $emp->{SHIP}->{$id}};
 sub getships  {my ($emp) = @_; return keys %{$emp->{SHIP}}};
-sub getplane   {my ($emp,$id)   = @_; return $emp->{PLANE}->{$id}};
-sub getplanes  {my ($emp) = @_; return keys %{$emp->{PLANE}}};
+sub getunit   {my ($emp,$id)   = @_; return $emp->{UNIT}->{$id}};
+sub getunits  {my ($emp) = @_; return keys %{$emp->{UNIT}}};
+sub getplane  {my ($emp,$id)   = @_; return $emp->{PLANE}->{$id}};
+sub getplanes {my ($emp) = @_; return keys %{$emp->{PLANE}}};
 sub nnum      {my $emp = shift; return $emp->{nnum}};
 sub exist     {my ($emp,$num) = @_; return defined $emp->{nation}->[$num]};
 sub nat       {my ($emp,$num) = @_; return $emp->{nation}->[$num]};

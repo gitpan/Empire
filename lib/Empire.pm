@@ -13,7 +13,7 @@ use Net::Cmd;
 use Lingua::EN::Numericalize;
 use Exporter;
 
-$VERSION = '0.121';
+$VERSION = '0.122';
 
 our @ISA = qw(Net::Cmd IO::Socket::INET Empire::Commands Exporter);
 our @EXPORT_OK = qw($C_CMDOK $C_DATA $C_INIT $C_EXIT
@@ -57,7 +57,7 @@ sub new {
 	use Empire::SectorType;
 	use Empire::ProductType;
 	use Empire::Nation;
-	use Empire::Land;
+	use Empire::Unit;
 	use Empire::Plane;
 	use Empire::EConfig;
     }
@@ -196,7 +196,7 @@ sub login {
     $emp->{INFORM} = '';
     $emp->{ANNO} = 0;
     $emp->{TELE} = 0;
-    ($proto,$response) = $emp->empreadline('update');
+    ($proto,$response) = $emp->empreadline('init');
     return $emp;
 }
 sub coun {
@@ -337,6 +337,9 @@ sub empreadline {
 	    elsif ($emp->{RESPONSE} =~ /You have (.*) new telegram/) {
 		$emp->{TELE} = $emp->{RESPONSE};
 	    }
+	    else {
+		$data .= $emp->{RESPONSE} ."\n";
+	    }
 	}
 	elsif ($emp->{EMPSTATUS} eq $C_FLASH) {
 	    $emp->{FLASH} .= $emp->{RESPONSE} . "\n";
@@ -351,6 +354,9 @@ sub empreadline {
 	($emp->{EMPSTATUS},$emp->{RESPONSE}) = ($response =~ /^(\S) (.*)/);
     }
     $emp->{DATA}->{$cmd} = $data;
+    if ($cmd eq 'init') {
+	print "$emp->{DATA}->{$cmd}\n";
+    }
     if ($emp->{EMPSTATUS} eq $C_PROMPT) {
 	my($min,$btu) = ($emp->{RESPONSE} =~ /(\d+)\s+(\d+)/);
 	$emp->{BTU} = $btu;
