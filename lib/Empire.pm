@@ -13,7 +13,7 @@ use Net::Cmd;
 use Lingua::EN::Numericalize;
 use Exporter;
 
-$VERSION = '0.12';
+$VERSION = '0.121';
 
 our @ISA = qw(Net::Cmd IO::Socket::INET Empire::Commands Exporter);
 our @EXPORT_OK = qw($C_CMDOK $C_DATA $C_INIT $C_EXIT
