@@ -13,7 +13,7 @@ use Net::Cmd;
 use Lingua::EN::Numericalize;
 use Exporter;
 
-$VERSION = '0.11';
+$VERSION = '0.12';
 
 our @ISA = qw(Net::Cmd IO::Socket::INET Empire::Commands Exporter);
 our @EXPORT_OK = qw($C_CMDOK $C_DATA $C_INIT $C_EXIT
@@ -64,6 +64,7 @@ sub new {
     else {
 	$emp = {};
     }
+    print "Using Empire.pm v$VERSION\n";
     $emp->{HOST} = $param{-host};
     $emp->{PORT} = $param{-port};
     if ($param{-country} && $param{-player}) {
@@ -336,7 +337,6 @@ sub empreadline {
 	    elsif ($emp->{RESPONSE} =~ /You have (.*) new telegram/) {
 		$emp->{TELE} = $emp->{RESPONSE};
 	    }
-	    $data .= $emp->{RESPONSE} . "\n";
 	}
 	elsif ($emp->{EMPSTATUS} eq $C_FLASH) {
 	    $emp->{FLASH} .= $emp->{RESPONSE} . "\n";
